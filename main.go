@@ -31,10 +31,9 @@ func main() {
 	date := randDate()
 	ds := date.Format("January 02, 2006")
 	answer := strings.ToLower(date.Format("Monday"))
-	fmt.Println(ds)
 	fmt.Println("Type 'help' for help/info")
 	for {
-		fmt.Print("\n > ")
+		fmt.Printf("\n%s > ", ds)
 		var input string
 		fmt.Scanln(&input)
 		switch strings.ToLower(input) {
