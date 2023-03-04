@@ -89,20 +89,22 @@ Type 'century_anchor' to show the century anchor for the date
 Type 'year_anchor' to show the doomsday for the date's year`
 
 	helpDays = `
-| Month |  Month/Day  |      Mnemonic      |             All days             |
-| ----- | ----------- | ------------------ | -------------------------------- |
-| Jan   | 1/3, 1/4    | 3rd in 3, 4th in 4 | 3, 10, 17, 24, 31 (+1 for leap)  |
-| Feb   | 2/28, 2/29  | last day of Feb    | 0, 7, 14, 21, 28 (+1 for leap)   |
-| Mar   | 3/14        | last day of Feb    | 0, 7, 14, 21, 28                 |
-| Apr   | 4/4         | evens double       | 4, 11, 18, 25, 32                |
-| May   | 5/9         | 9-to-5 at 7-11     | 2, 9, 16, 23, 30                 |
-| Jun   | 6/6         | evens double       | 6, 13, 20, 27                    |
-| Jul   | 7/11        | 9-to-5 at 7-11     | 4, 11, 18, 25, 32                |
-| Aug   | 8/8         | evens double       | 1, 8, 15, 22, 29                 |
-| Sep   | 9/5         | 9-to-5 at 7-11     | 5, 12, 19, 26                    |
-| Oct   | 10/10       | evens double       | 3, 10, 17, 24, 31                |
-| Nov   | 11/7        | 9-to-5 at 7-11     | 0, 7, 14, 21, 28                 |
-| Dec   | 12/12       | evens double       | 5, 12, 19, 26                    |`
+┏━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Month ┃ Day        ┃ Mnemonic           ┃ All Days                        ┃
+┡━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Jan   │ 1/3, 1/4   │ 3rd in 3, 4th in 4 │ 3, 10, 17, 24, 31 (+1 for leap) │
+│ Feb   │ 2/28, 2/29 │ last day of Feb    │ 0, 7, 14, 21, 28 (+1 for leap)  │
+│ Mar   │ 3/14       │ last day of Feb    │ 0, 7, 14, 21, 28                │
+│ Apr   │ 4/4        │ evens double       │ 4, 11, 18, 25, 32               │
+│ May   │ 5/9        │ 9-to-5 at 7-11     │ 2, 9, 16, 23, 30                │
+│ Jun   │ 6/6        │ evens double       │ 6, 13, 20, 27                   │
+│ Jul   │ 7/11       │ 9-to-5 at 7-11     │ 4, 11, 18, 25, 32               │
+│ Aug   │ 8/8        │ evens double       │ 1, 8, 15, 22, 29                │
+│ Sep   │ 9/5        │ 9-to-5 at 7-11     │ 5, 12, 19, 26                   │
+│ Oct   │ 10/10      │ evens double       │ 3, 10, 17, 24, 31               │
+│ Nov   │ 11/7       │ 9-to-5 at 7-11     │ 0, 7, 14, 21, 28                │
+│ Dec   │ 12/12      │ evens double       │ 5, 12, 19, 26                   │
+└───────┴────────────┴────────────────────┴─────────────────────────────────┘`
 
 	helpAnchor = `
 Find anchor day for the century:
