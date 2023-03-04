@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"os"
@@ -27,11 +28,22 @@ var (
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	showStats := flag.Bool("stats", false, "show answer time statistics")
+	flag.Parse()
+	if *showStats {
+		if err := displayStats(); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to get stats: %v", err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+
+	wrongcnt := 0
 	date := randDate()
 	ds := date.Format("January 02, 2006")
 	answer := strings.ToLower(date.Format("Monday"))
 	fmt.Println("Type 'help' for help/info")
+	start := time.Now()
 	for {
 		fmt.Printf("\n%s > ", ds)
 		var input string
@@ -39,6 +51,10 @@ func main() {
 		switch strings.ToLower(input) {
 		case answer:
 			fmt.Printf("\nCorrect! %s was on a %s%s\n", ds, strings.ToUpper(answer[:1]), answer[1:])
+			if err := logStats(time.Since(start), wrongcnt); err != nil {
+				fmt.Fprintf(os.Stderr, "failed to log time: %v\n", err)
+				os.Exit(1)
+			}
 			os.Exit(0)
 		case "help":
 			fmt.Println(helpText)
@@ -52,6 +68,7 @@ func main() {
 			fmt.Printf("The anchor day for %d is %s\n", date.Year(), anchorDay(date.Year()))
 		default:
 			fmt.Printf("\n%q is incorrect\n", input)
+			wrongcnt++
 		}
 	}
 }
@@ -94,7 +111,7 @@ Type 'year_anchor' to show the doomsday for the date's year`
 ┡━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
 │ Jan   │ 1/3, 1/4   │ 3rd in 3, 4th in 4 │ 3, 10, 17, 24, 31 (+1 for leap) │
 │ Feb   │ 2/28, 2/29 │ last day of Feb    │ 0, 7, 14, 21, 28 (+1 for leap)  │
-│ Mar   │ 3/14       │ last day of Feb    │ 0, 7, 14, 21, 28                │
+│ Mar   │ 3/14       │ multiples of 7     │ 0, 7, 14, 21, 28                │
 │ Apr   │ 4/4        │ evens double       │ 4, 11, 18, 25, 32               │
 │ May   │ 5/9        │ 9-to-5 at 7-11     │ 2, 9, 16, 23, 30                │
 │ Jun   │ 6/6        │ evens double       │ 6, 13, 20, 27                   │
@@ -108,32 +125,29 @@ Type 'year_anchor' to show the doomsday for the date's year`
 
 	helpAnchor = `
 Find anchor day for the century:
-  Let c = year // 100
-  Let r = c % 4
-    anchor = 5 * r % 7 + 2
-      -OR-
-    r=0, Tuesday
-    r=1, Sunday
-    r=2, Friday
-    r=3, Wednesday
+  Let c = first 2 digits of year, r = c % 4
+    r=0, Tuesday   | The
+    r=1, Sunday    | Sad
+    r=2, Friday    | Frog
+    r=3, Wednesday | Wept
 
 Find anchor day for the year:
   Let y = last 2 digits of year
-    anchor = ((y // 12) + (y % 12) + (y % 12 // 4)) % 7 + century_anchor
-      -OR-
     a = y // 12
     b = y % 12
     c = b // 4
     d = (a + b + c) % 7
     anchor = century_anchor + d
 
-| Century | Anchor |     Mnemonic     |
-| ------- | ------ | ---------------- |
-|  1600s  |  Tue   |                  |
-|  1700s  |  Sun   |                  |
-|  1800s  |  Fri   |                  |
-|  1900s  |  Wed   | We-in-dis-day    |
-|  2000s  |  Tue   | Y-Tue-K          |
-|  2100s  |  Sun   | 21-day is Sunday |
-|  2200s  |  Fri   |                  |`
+┏━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━┓
+┃ Century ┃ Anchor ┃     Mnemonic     ┃
+┡━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━┩
+│  1600s  │  Tue   │                  │
+│  1700s  │  Sun   │                  │
+│  1800s  │  Fri   │                  │
+│  1900s  │  Wed   │   We-in-dis-day  │
+│  2000s  │  Tue   │      Y-Tue-K     │
+│  2100s  │  Sun   │ 21-day is Sunday │
+│  2200s  │  Fri   │                  │
+└─────━━──┴────────┴──────────────────┘`
 )
