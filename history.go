@@ -17,19 +17,6 @@ const (
 	wrongCntFile = "incorrect_answers_count"
 )
 
-func cfgDir() (string, error) {
-	uCfgDir, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
-	}
-	cfgDir := path.Join(uCfgDir, "doomsday")
-	err = os.Mkdir(cfgDir, 0o750)
-	if err != nil && !os.IsExist(err) {
-		return "", err
-	}
-	return cfgDir, nil
-}
-
 func logStats(t time.Duration, wrong int) error {
 	fmt.Println("Answered in " + t.Truncate(time.Second).String())
 	p, err := cfgDir()
@@ -37,12 +24,25 @@ func logStats(t time.Duration, wrong int) error {
 		return err
 	}
 	if err := appendTime(t, path.Join(p, timesFile)); err != nil {
-		return err
+		return fmt.Errorf("failed to add answer time: %v", err)
 	}
 	if err := addWrongCount(wrong, path.Join(p, wrongCntFile)); err != nil {
-		return err
+		return fmt.Errorf("failed to add wrong guess count: %v", err)
 	}
 	return nil
+}
+
+func cfgDir() (string, error) {
+	uCfgDir, err := os.UserConfigDir()
+	if err != nil {
+		return "", fmt.Errorf("could not get config directory: %v", err)
+	}
+	cfgDir := path.Join(uCfgDir, "doomsday")
+	err = os.Mkdir(cfgDir, 0o750)
+	if err != nil && !os.IsExist(err) {
+		return "", fmt.Errorf("could not get config directory: %v", err)
+	}
+	return cfgDir, nil
 }
 
 func appendTime(t time.Duration, path string) error {
@@ -67,14 +67,11 @@ func appendTime(t time.Duration, path string) error {
 }
 
 func addWrongCount(cnt int, path string) error {
-	if cnt == 0 {
-		return nil
-	}
 	allCnt, err := readWrongCount(path)
 	if err != nil {
 		return err
 	}
-	f, err := os.Open(path)
+	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
@@ -84,7 +81,10 @@ func addWrongCount(cnt int, path string) error {
 
 func readWrongCount(path string) (int, error) {
 	data, err := os.ReadFile(path)
-	if err != nil && !os.IsNotExist(err) {
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
 		return 0, err
 	}
 	cnt, err := strconv.Atoi(strings.TrimSpace(string(data)))

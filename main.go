@@ -52,7 +52,7 @@ func main() {
 		case answer:
 			fmt.Printf("\nCorrect! %s was on a %s%s\n", ds, strings.ToUpper(answer[:1]), answer[1:])
 			if err := logStats(time.Since(start), wrongcnt); err != nil {
-				fmt.Fprintf(os.Stderr, "failed to log time: %v\n", err)
+				fmt.Fprintln(os.Stderr, err)
 				os.Exit(1)
 			}
 			os.Exit(0)
